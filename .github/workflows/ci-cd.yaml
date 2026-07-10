@@ -1,0 +1,139 @@
+name: Build and Fake Multi-Environment Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  deployments: write
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  PROJECT_PATH: BookPortel/BookPortel.csproj
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore
+        run: dotnet restore ${{ env.PROJECT_PATH }}
+
+      - name: Build
+        run: dotnet build ${{ env.PROJECT_PATH }} --configuration Release --no-restore
+
+      - name: Publish
+        run: dotnet publish ${{ env.PROJECT_PATH }} -c Release -o ./publish
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app
+          path: ./publish
+
+  deploy-dev:
+    needs: build
+    runs-on: ubuntu-latest
+
+    environment: dev
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: app
+
+      - name: Create GitHub Deployment (DEV)
+        id: deployment
+        uses: chrnorm/deployment-action@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment: dev
+          description: Fake deployment to DEV
+
+      - name: Simulate Deployment
+        run: |
+          echo "Deploying to DEV..."
+          sleep 10
+          echo "Deployment complete."
+
+      - name: Mark Deployment Success
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+          state: success
+
+  deploy-qa:
+    needs: deploy-dev
+    runs-on: ubuntu-latest
+
+    environment: qa
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: app
+
+      - name: Create GitHub Deployment (QA)
+        id: deployment
+        uses: chrnorm/deployment-action@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment: qa
+          description: Fake deployment to QA
+
+      - name: Simulate Deployment
+        run: |
+          echo "Deploying to QA..."
+          sleep 10
+          echo "Deployment complete."
+
+      - name: Mark Deployment Success
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+          state: success
+
+  deploy-prod:
+    needs: deploy-qa
+    runs-on: ubuntu-latest
+
+    environment: production
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: app
+
+      - name: Create GitHub Deployment (PRODUCTION)
+        id: deployment
+        uses: chrnorm/deployment-action@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment: production
+          description: Fake deployment to Production
+
+      - name: Simulate Deployment
+        run: |
+          echo "Deploying to Production..."
+          sleep 10
+          echo "Deployment complete."
+
+      - name: Mark Deployment Success
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+          state: success
