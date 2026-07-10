@@ -4,7 +4,7 @@ provider "azurerm" {
 
 # Define the Resource Group
 resource "azurerm_resource_group" "example" {
-  name     = "rg-bookportal-resources"
+  name     = "rg-bookportal-rg"
   location = "UAE North"  # Replace with your desired location
 }
 
@@ -23,7 +23,7 @@ resource "azurerm_app_service_plan" "standard_plan" {
 
 # Define the Code-based App Service
 resource "azurerm_app_service" "code_service" {
-  name                = "rg-bookportal-code-app-service"
+  name                = "rg-bookportal-code-app-svc"
   location            = azurerm_resource_group.example.location
   resource_group_name = azurerm_resource_group.example.name
   app_service_plan_id = azurerm_app_service_plan.standard_plan.id
