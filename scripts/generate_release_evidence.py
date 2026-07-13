@@ -263,6 +263,112 @@ try:
 
 except requests.exceptions.RequestException as ex:
     logger.error("Failed to retrieve build information: %s", ex)
+
+# -----------------------------------------------------------------------------
+# Pull Request Information
+# -----------------------------------------------------------------------------
+try:
+    logger.info("Retrieving pull request information...")
+
+    pull_requests = github_get(
+        f"/repos/{GITHUB_REPOSITORY}/commits/{GITHUB_SHA}/pulls"
+    )
+
+    if pull_requests:
+
+        pull_request = pull_requests[0]
+
+        ws["A52"] = "Pull Request Information"
+        ws["B52"] = ""
+
+        ws["A53"] = "Pull Request Number"
+        ws["B53"] = pull_request.get("number")
+
+        ws["A54"] = "Pull Request Title"
+        ws["B54"] = pull_request.get("title")
+
+        ws["A55"] = "Pull Request State"
+        ws["B55"] = pull_request.get("state")
+
+        ws["A56"] = "Merged"
+        ws["B56"] = pull_request.get("merged")
+
+        ws["A57"] = "Created By"
+        ws["B57"] = pull_request.get("user", {}).get("login")
+
+        ws["A58"] = "Created At"
+        ws["B58"] = pull_request.get("created_at")
+
+        ws["A59"] = "Merged At"
+        ws["B59"] = pull_request.get("merged_at")
+
+        ws["A60"] = "Base Branch"
+        ws["B60"] = pull_request.get("base", {}).get("ref")
+
+        ws["A61"] = "Source Branch"
+        ws["B61"] = pull_request.get("head", {}).get("ref")
+
+        ws["A62"] = "Pull Request URL"
+        ws["B62"] = pull_request.get("html_url")
+
+        logger.info("Pull request information collected successfully.")
+
+    else:
+
+        ws["A52"] = "Pull Request Information"
+        ws["B52"] = "No Pull Request associated with this commit."
+
+        logger.info("No pull request found for commit.")
+
+except requests.exceptions.RequestException as ex:
+    logger.error("Failed to retrieve pull request information: %s", ex)
+
+# -----------------------------------------------------------------------------
+# Changed Files
+# -----------------------------------------------------------------------------
+try:
+    logger.info("Retrieving changed files...")
+
+    commit = github_get(
+        f"/repos/{GITHUB_REPOSITORY}/commits/{GITHUB_SHA}"
+    )
+
+    files = commit.get("files", [])
+
+    start_row = 64
+
+    ws[f"A{start_row}"] = "Changed Files"
+
+    header_row = start_row + 1
+
+    ws[f"A{header_row}"] = "File Name"
+    ws[f"B{header_row}"] = "Status"
+    ws[f"C{header_row}"] = "Additions"
+    ws[f"D{header_row}"] = "Deletions"
+    ws[f"E{header_row}"] = "Changes"
+
+    current_row = header_row + 1
+
+    if files:
+
+        for file in files:
+
+            ws[f"A{current_row}"] = file.get("filename")
+            ws[f"B{current_row}"] = file.get("status")
+            ws[f"C{current_row}"] = file.get("additions")
+            ws[f"D{current_row}"] = file.get("deletions")
+            ws[f"E{current_row}"] = file.get("changes")
+
+            current_row += 1
+
+        logger.info("Changed files collected successfully.")
+
+    else:
+
+        ws[f"A{current_row}"] = "No changed files found."
+
+except requests.exceptions.RequestException as ex:
+    logger.error("Failed to retrieve changed files: %s", ex)
 output = "reports/ReleaseEvidence.xlsx"
 
 wb.save(output)
