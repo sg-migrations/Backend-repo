@@ -1,6 +1,20 @@
 import os
-from openpyxl import Workbook
+import logging
+import requests
+
 from datetime import datetime
+
+from openpyxl import Workbook
+from openpyxl.styles import Font, PatternFill
+# -----------------------------------------------------------------------------
+# Logging
+# -----------------------------------------------------------------------------
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)s | %(message)s",
+)
+
+logger = logging.getLogger(__name__)
 
 # Create reports directory
 os.makedirs("reports", exist_ok=True)
@@ -34,4 +48,4 @@ output = "reports/ReleaseEvidence.xlsx"
 
 wb.save(output)
 
-print(f"Evidence report generated: {output}")
+logger.info("Evidence report generated: %s", output)
