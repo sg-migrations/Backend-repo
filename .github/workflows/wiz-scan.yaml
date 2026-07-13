@@ -1,45 +1,45 @@
-name: Wiz Security Scan
+# name: Wiz Security Scan
 
-on:
-  push:
-    branches:
-      - main
+# on:
+#   push:
+#     branches:
+#       - main
 
-  pull_request:
-    branches:
-      - main
+#   pull_request:
+#     branches:
+#       - main
 
-jobs:
+# jobs:
 
-  wiz-scan:
-    name: Wiz IaC Scan
-    runs-on: ubuntu-latest
+#   wiz-scan:
+#     name: Wiz IaC Scan
+#     runs-on: ubuntu-latest
 
-    steps:
+#     steps:
 
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+#     - name: Checkout Repository
+#       uses: actions/checkout@v4
 
-    - name: Install Wiz CLI
-      run: |
-        curl -o wizcli https://downloads.wiz.io/wizcli/latest/wizcli-linux-amd64
-        chmod +x wizcli
-        sudo mv wizcli /usr/local/bin/wizcli
+#     - name: Install Wiz CLI
+#       run: |
+#         curl -o wizcli https://downloads.wiz.io/wizcli/latest/wizcli-linux-amd64
+#         chmod +x wizcli
+#         sudo mv wizcli /usr/local/bin/wizcli
 
-    - name: Verify Wiz CLI
-      run: |
-        wizcli version
+#     - name: Verify Wiz CLI
+#       run: |
+#         wizcli version
 
-    - name: Authenticate to Wiz
-      run: |
-        wizcli auth \
-          --id "${{ secrets.WIZ_CLIENT_ID }}" \
-          --secret "${{ secrets.WIZ_CLIENT_SECRET }}"
+#     - name: Authenticate to Wiz
+#       run: |
+#         wizcli auth \
+#           --id "${{ secrets.WIZ_CLIENT_ID }}" \
+#           --secret "${{ secrets.WIZ_CLIENT_SECRET }}"
 
-    - name: Run Wiz IaC Scan
-      run: |
-        wizcli dir scan --path .
+#     - name: Run Wiz IaC Scan
+#       run: |
+#         wizcli dir scan --path .
 
-    - name: Scan Completed
-      run: |
-        echo "Wiz scan completed successfully"
+#     - name: Scan Completed
+#       run: |
+#         echo "Wiz scan completed successfully"
