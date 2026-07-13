@@ -166,6 +166,103 @@ try:
 
 except requests.exceptions.RequestException as ex:
     logger.error("Failed to retrieve workflow information: %s", ex)
+
+# -----------------------------------------------------------------------------
+# Commit Information
+# -----------------------------------------------------------------------------
+try:
+    logger.info("Retrieving commit information...")
+
+    commit = github_get(
+        f"/repos/{GITHUB_REPOSITORY}/commits/{GITHUB_SHA}"
+    )
+
+    commit_info = commit.get("commit", {})
+    author = commit_info.get("author", {})
+    committer = commit_info.get("committer", {})
+
+    ws["A29"] = "Commit Message"
+    ws["B29"] = commit_info.get("message")
+
+    ws["A30"] = "Author"
+    ws["B30"] = author.get("name")
+
+    ws["A31"] = "Author Email"
+    ws["B31"] = author.get("email")
+
+    ws["A32"] = "Author Date"
+    ws["B32"] = author.get("date")
+
+    ws["A33"] = "Committer"
+    ws["B33"] = committer.get("name")
+
+    ws["A34"] = "Committer Email"
+    ws["B34"] = committer.get("email")
+
+    ws["A35"] = "Commit Date"
+    ws["B35"] = committer.get("date")
+
+    ws["A36"] = "Commit URL"
+    ws["B36"] = commit.get("html_url")
+
+    logger.info("Commit information collected successfully.")
+
+except requests.exceptions.RequestException as ex:
+    logger.error("Failed to retrieve commit information: %s", ex)
+
+# -----------------------------------------------------------------------------
+# Build Information
+# -----------------------------------------------------------------------------
+try:
+    logger.info("Collecting build information...")
+
+    workflow_run = github_get(
+        f"/repos/{GITHUB_REPOSITORY}/actions/runs/{GITHUB_RUN_ID}"
+    )
+
+    ws["A38"] = "Build Information"
+    ws["B38"] = ""
+
+    ws["A39"] = "Build ID"
+    ws["B39"] = workflow_run.get("id")
+
+    ws["A40"] = "Build Number"
+    ws["B40"] = workflow_run.get("run_number")
+
+    ws["A41"] = "Build Attempt"
+    ws["B41"] = workflow_run.get("run_attempt")
+
+    ws["A42"] = "Head Branch"
+    ws["B42"] = workflow_run.get("head_branch")
+
+    ws["A43"] = "Head SHA"
+    ws["B43"] = workflow_run.get("head_sha")
+
+    ws["A44"] = "Event"
+    ws["B44"] = workflow_run.get("event")
+
+    ws["A45"] = "Status"
+    ws["B45"] = workflow_run.get("status")
+
+    ws["A46"] = "Conclusion"
+    ws["B46"] = workflow_run.get("conclusion")
+
+    ws["A47"] = "Created At"
+    ws["B47"] = workflow_run.get("created_at")
+
+    ws["A48"] = "Updated At"
+    ws["B48"] = workflow_run.get("updated_at")
+
+    ws["A49"] = "HTML URL"
+    ws["B49"] = workflow_run.get("html_url")
+
+    ws["A50"] = "Actor"
+    ws["B50"] = workflow_run.get("actor", {}).get("login")
+
+    logger.info("Build information collected successfully.")
+
+except requests.exceptions.RequestException as ex:
+    logger.error("Failed to retrieve build information: %s", ex)
 output = "reports/ReleaseEvidence.xlsx"
 
 wb.save(output)
