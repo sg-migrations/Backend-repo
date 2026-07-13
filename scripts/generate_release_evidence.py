@@ -124,6 +124,48 @@ try:
 
 except requests.exceptions.RequestException as ex:
     logger.error("Failed to retrieve repository information: %s", ex)
+
+# -----------------------------------------------------------------------------
+# Workflow Information
+# -----------------------------------------------------------------------------
+try:
+    logger.info("Retrieving workflow run information...")
+
+    workflow_run = github_get(
+        f"/repos/{GITHUB_REPOSITORY}/actions/runs/{GITHUB_RUN_ID}"
+    )
+
+    ws["A19"] = "Workflow Name"
+    ws["B19"] = workflow_run.get("name")
+
+    ws["A20"] = "Run Number"
+    ws["B20"] = workflow_run.get("run_number")
+
+    ws["A21"] = "Run Attempt"
+    ws["B21"] = workflow_run.get("run_attempt")
+
+    ws["A22"] = "Workflow Event"
+    ws["B22"] = workflow_run.get("event")
+
+    ws["A23"] = "Workflow Status"
+    ws["B23"] = workflow_run.get("status")
+
+    ws["A24"] = "Workflow Conclusion"
+    ws["B24"] = workflow_run.get("conclusion")
+
+    ws["A25"] = "Workflow Created"
+    ws["B25"] = workflow_run.get("created_at")
+
+    ws["A26"] = "Workflow Updated"
+    ws["B26"] = workflow_run.get("updated_at")
+
+    ws["A27"] = "Workflow URL"
+    ws["B27"] = workflow_run.get("html_url")
+
+    logger.info("Workflow information collected successfully.")
+
+except requests.exceptions.RequestException as ex:
+    logger.error("Failed to retrieve workflow information: %s", ex)
 output = "reports/ReleaseEvidence.xlsx"
 
 wb.save(output)
