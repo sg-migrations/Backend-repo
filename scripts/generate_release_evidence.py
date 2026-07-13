@@ -88,6 +88,42 @@ ws["B7"] = os.getenv("GITHUB_ACTOR")
 ws["A8"] = "Generated On"
 ws["B8"] = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
 
+# -----------------------------------------------------------------------------
+# Repository Information
+# -----------------------------------------------------------------------------
+try:
+    logger.info("Retrieving repository information...")
+
+    repository = github_get(f"/repos/{GITHUB_REPOSITORY}")
+
+    ws["A10"] = "Repository Name"
+    ws["B10"] = repository.get("name")
+
+    ws["A11"] = "Repository Owner"
+    ws["B11"] = repository.get("owner", {}).get("login")
+
+    ws["A12"] = "Repository Visibility"
+    ws["B12"] = repository.get("visibility")
+
+    ws["A13"] = "Default Branch"
+    ws["B13"] = repository.get("default_branch")
+
+    ws["A14"] = "Repository URL"
+    ws["B14"] = repository.get("html_url")
+
+    ws["A15"] = "Clone URL"
+    ws["B15"] = repository.get("clone_url")
+
+    ws["A16"] = "Created At"
+    ws["B16"] = repository.get("created_at")
+
+    ws["A17"] = "Last Updated"
+    ws["B17"] = repository.get("updated_at")
+
+    logger.info("Repository information collected successfully.")
+
+except requests.exceptions.RequestException as ex:
+    logger.error("Failed to retrieve repository information: %s", ex)
 output = "reports/ReleaseEvidence.xlsx"
 
 wb.save(output)
