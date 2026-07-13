@@ -16,6 +16,20 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
+# -----------------------------------------------------------------------------
+# GitHub Configuration
+# -----------------------------------------------------------------------------
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
+GITHUB_API_URL = os.getenv("GITHUB_API_URL", "https://api.github.com")
+GITHUB_SERVER_URL = os.getenv("GITHUB_SERVER_URL", "https://github.com")
+
+GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY")
+GITHUB_RUN_ID = os.getenv("GITHUB_RUN_ID")
+GITHUB_SHA = os.getenv("GITHUB_SHA")
+GITHUB_REF_NAME = os.getenv("GITHUB_REF_NAME")
+GITHUB_ACTOR = os.getenv("GITHUB_ACTOR")
+GITHUB_WORKFLOW = os.getenv("GITHUB_WORKFLOW")
+GITHUB_RUN_NUMBER = os.getenv("GITHUB_RUN_NUMBER")
 # Create reports directory
 os.makedirs("reports", exist_ok=True)
 
