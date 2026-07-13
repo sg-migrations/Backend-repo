@@ -30,6 +30,36 @@ GITHUB_REF_NAME = os.getenv("GITHUB_REF_NAME")
 GITHUB_ACTOR = os.getenv("GITHUB_ACTOR")
 GITHUB_WORKFLOW = os.getenv("GITHUB_WORKFLOW")
 GITHUB_RUN_NUMBER = os.getenv("GITHUB_RUN_NUMBER")
+
+# -----------------------------------------------------------------------------
+# GitHub REST API Helper
+# -----------------------------------------------------------------------------
+def github_get(endpoint: str, params: dict | None = None) -> dict:
+    """
+    Executes a GET request against the GitHub REST API.
+    """
+
+    url = f"{GITHUB_API_URL}{endpoint}"
+
+    headers = {
+        "Authorization": f"Bearer {GITHUB_TOKEN}",
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+        "User-Agent": "ReleaseEvidenceGenerator",
+    }
+
+    logger.info("GET %s", url)
+
+    response = requests.get(
+        url=url,
+        headers=headers,
+        params=params,
+        timeout=30,
+    )
+
+    response.raise_for_status()
+
+    return response.json()
 # Create reports directory
 os.makedirs("reports", exist_ok=True)
 
