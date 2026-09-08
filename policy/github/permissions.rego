@@ -1,4 +1,4 @@
-package github.workflow
+package main
 
 import rego.v1
 
