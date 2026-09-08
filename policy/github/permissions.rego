@@ -3,6 +3,6 @@ package main
 import rego.v1
 
 deny contains msg if {
-    input.permissions == "write"
+    input.permissions.contents == "write"
     msg := "Global permissions: write-all is not allowed."
 }
