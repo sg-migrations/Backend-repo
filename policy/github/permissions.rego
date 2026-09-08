@@ -3,6 +3,6 @@ package github.workflow
 import rego.v1
 
 deny contains msg if {
-    input.permissions == "write-all"
+    input.permissions == "write"
     msg := "Global permissions: write-all is not allowed."
 }
