@@ -28,7 +28,7 @@ deny contains msg if {
 # --------------------------------
 
 deny contains msg if {
-    input.jobs["deploy-qa"].needs != "build"
+    input.jobs["deploy-qa"].needs != "deploy-dev"
     msg := "QA deployment must depend on DEV deployment."
 }
 
